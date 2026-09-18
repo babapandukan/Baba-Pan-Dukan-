@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baba Pan Dukan - Payment QR</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f5;color:#17231b}
+.container{max-width:430px;margin:auto;padding:18px}
+.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 8px 30px rgba(0,0,0,.09)}
+.logo{width:76px;height:76px;border-radius:50%;margin:auto;display:block;object-fit:cover}
+h1{text-align:center;margin:10px 0 3px;font-size:25px}
+.sub{text-align:center;color:#68736c;margin-bottom:22px}
+label{font-weight:700;display:block;margin:12px 0 7px}
+input{width:100%;padding:15px;border:2px solid #dce5df;border-radius:14px;font-size:20px;outline:none}
+input:focus{border-color:#18864b}
+.mdr{display:flex;justify-content:space-between;background:#f1f7f3;padding:13px;border-radius:13px;margin-top:12px}
+.total{display:flex;justify-content:space-between;font-size:19px;font-weight:800;margin-top:14px}
+.qrbox{text-align:center;margin:20px 0 12px;padding:18px;border:1px dashed #b9c9bf;border-radius:18px;background:#fafcfb}
+#qrcode{display:inline-block;padding:8px;background:#fff}
+#qrcode img{display:block;margin:auto}
+.upi{font-size:13px;color:#68736c;word-break:break-all;margin-top:10px}
+button{width:100%;border:0;border-radius:14px;padding:15px;margin-top:10px;font-size:16px;font-weight:800;cursor:pointer}
+.green{background:#16864a;color:#fff}
+.dark{background:#17231b;color:#fff}
+.light{background:#e9f2ed;color:#176b3e}
+.note{font-size:12px;line-height:1.5;color:#6b756e;margin-top:16px;text-align:center}
+.success{display:none;text-align:center;color:#16864a;font-weight:700;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <img class="logo" src="logo.png" alt="Baba Pan Dukan Logo" onerror="this.style.display='none'">
+    <h1>🌿 Baba Pan Dukan</h1>
+    <div class="sub">Secure UPI Payment QR</div>
+
+    <label for="amount">Payment Amount (₹)</label>
+    <input id="amount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="जैसे 500" oninput="generateQR()">
+
+    <div class="mdr">
+      <span>Informational MDR (0.4%)</span>
+      <strong id="mdr">₹0.00</strong>
+    </div>
+    <div class="total">
+      <span>Merchant Payment</span>
+      <span id="pay">₹0.00</span>
+    </div>
+
+    <div class="qrbox">
+      <div id="qrcode"></div>
+      <div class="upi">UPI: Q139938267@ybl</div>
+    </div>
+
+    <button class="green" onclick="openUPI()">📲 Pay with UPI App</button>
+    <button class="dark" onclick="downloadQR()">⬇️ Download QR</button>
+    <button class="light" onclick="shareQR()">📤 Share</button>
+
+    <div id="msg" class="success">QR तैयार है ✓</div>
+    <div class="note">
+      QR में merchant payment amount शामिल है। 0.4% MDR केवल calculation/information के लिए दिखाया गया है।
+      Customer से MDR अलग से वसूलने से पहले अपने acquiring bank/PSP के नियमों की पुष्टि करें।
+    </div>
+  </div>
+</div>
+
+<script>
+const UPI_ID = "Q139938267@ybl";
+const SHOP = "Baba Pan Dukan";
+let qrUrl = "";
+
+function money(n){return "₹"+Number(n||0).toFixed(2)}
+
+function generateQR(){
+  const amount = parseFloat(document.getElementById("amount").value) || 0;
+  const mdr = amount * 0.004;
+  document.getElementById("mdr").textContent = money(mdr);
+  document.getElementById("pay").textContent = money(amount);
+
+  const box = document.getElementById("qrcode");
+  box.innerHTML = "";
+  if(amount <= 0) return;
+
+  const upi = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(SHOP)}&am=${amount.toFixed(2)}&cu=INR`;
+  qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="+encodeURIComponent(upi);
+
+  const img = document.createElement("img");
+  img.src = qrUrl;
+  img.width = 280;
+  img.height = 280;
+  img.alt = "UPI Payment QR";
+  box.appendChild(img);
+  document.getElementById("msg").style.display="block";
+}
+
+function openUPI(){
+  const amount = parseFloat(document.getElementById("amount").value) || 0;
+  if(amount <= 0){alert("पहले payment amount डालें");return;}
+  const upi = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(SHOP)}&am=${amount.toFixed(2)}&cu=INR`;
+  window.location.href = upi;
+}
+
+async function downloadQR(){
+  if(!qrUrl){alert("पहले amount डालें");return;}
+  try{
+    const r=await fetch(qrUrl);
+    const blob=await r.blob();
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="Baba-Pan-Dukan-Payment-QR.png";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }catch(e){window.open(qrUrl,"_blank")}
+}
+
+async function shareQR(){
+  if(!qrUrl){alert("पहले amount डालें");return;}
+  if(navigator.share){
+    try{await navigator.share({title:"Baba Pan Dukan Payment QR",text:"UPI Payment QR",url:qrUrl})}catch(e){}
+  }else{
+    navigator.clipboard?.writeText(qrUrl);
+    alert("QR link copy हो गया।");
+  }
+}
+</script>
+</body>
+</html>
