@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout | Baba Pan Dukan</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="topbar"><a class="brand" href="index.html"><span>BP</span><b>Baba Pan Dukan</b></a><nav><a href="products.html">Paan</a><a href="tracking.html">Track Order</a><a href="account.html">Account</a></nav></header>
+<main class="section narrow"><p class="eyebrow">CHECKOUT</p><h1>Place your order</h1>
+<form id="checkoutForm" class="panel">
+<label>Name<input id="customerName" required></label><label>Mobile Number<input id="mobile" inputmode="numeric" pattern="[0-9]{10}" required></label><label>Delivery Address<textarea id="address" required></textarea></label>
+<div class="payment-box"><b>💵 Cash on Delivery (COD)</b><p class="muted">Order receive karte waqt cash payment karein.</p></div>
+<div id="checkoutSummary"></div><button class="btn primary full" type="submit">Place Order</button>
+</form></main><footer>Baba Pan Dukan</footer><script src="script.js"></script><script>renderCheckout();</script></body></html>

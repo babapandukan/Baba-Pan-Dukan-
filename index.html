@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Baba Pan Dukan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html"><span>BP</span><b>Baba Pan Dukan</b></a>
+  <nav><a href="products.html">Paan</a><a href="tracking.html">Track Order</a><a href="account.html">Account</a></nav>
+  <a class="cart" href="cart.html">🛒 <span id="cartCount">0</span></a>
+</header>
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">MANGOBANDER • JAMUI</p>
+      <h1>Premium Paan,<br><em>made for you.</em></h1>
+      <p class="muted">Fresh paan, simple ordering and live order tracking — all in one place.</p>
+      <div class="actions"><a class="btn primary" href="products.html">Order Paan</a><a class="btn ghost" href="tracking.html">Track Order</a></div>
+    </div>
+    <div class="hero-card"><div class="leaf">🍃</div><h3>Fresh • Premium • Local</h3><p>Delivery available in Mangobander.</p></div>
+  </section>
+  <section class="section">
+    <div class="section-head"><div><p class="eyebrow">OUR MENU</p><h2>Popular Paan</h2></div><a href="products.html">View all →</a></div>
+    <div id="featured" class="grid"></div>
+  </section>
+</main>
+<footer>© 2026 Baba Pan Dukan · Mangobander</footer>
+<script src="script.js"></script><script>renderFeatured(); updateCartCount();</script>
+</body></html>
